@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Fine-Tuned CNN Results </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dash_files/style/style.css')}}" />
+</head>
+
+<body  class="page_results_body">
+    <!-- result text -->
+    <div id = "result_text">    </div>
+
+    <div class="row" id="image_container"> </div>
+<button  onclick="window.location.href='http://127.0.0.1:5000/';" class='btn'>Try a new image...</button>
+
+    <!-- JS -->
+    <script src="{{ url_for('static', filename='dash_files/js/jquery-1.12.3.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='dash_files/js/d3.js')}}"></script>
+    <script src="{{ url_for('static', filename='dash_files/js/queue.js')}}"></script>
+    <!--  -->
+   <script type="text/javascript">
+
+    //Clean projectsJson data
+$( document ).ready(function() {
+	  
+	    var imagedata = {
+	        cat: {{cat}},
+	        dog: {{dog}},
+	        image_path: {{image_path|tojson}}
+	    };
+
+	    console.log(imagedata)
+
+	    imagedata['cat'] = imagedata['cat'].toFixed(1);
+	    imagedata['dog'] = imagedata['dog'].toFixed(1);
+
+	    // get label from max prob
+	    (imagedata['cat']  > imagedata['dog'] ) ? pred_label = "cat" : pred_label = "dog";
+	    
+	    var result_html = "<h1><i>Fine-Tuned CNN Results</i><br/>";
+
+	    if (pred_label == "cat")
+	    {
+	    	if (imagedata['cat'] == "100.0") imagedata['cat'] = "100";
+	    	result_html+= "<u>detected cat(s)</u></h1><p>confidence = <span class='result_prob'>"+ imagedata['cat']+"% </span></p>"
+	    }else{
+	    	if (imagedata['dog'] == "100.0") imagedata['dog'] = "100";
+		result_html+= "<u>detected dog(s)</u></h1><p>confidence = <span class='result_prob'>"+ imagedata['dog']+"% </span></p>"
+	    }
+
+	    $("#result_text").append(result_html);
+
+	    // set image on page's path to uploaded image
+	    // $("#image_container").prepend('<img id="img_uploaded" src="'+ imagedata['image_path'] +'/>');
+	    $("#image_container").prepend('<img src="'+imagedata['image_path'] +'" id = "img_uploaded">');
+
+	    console.log('<img id="img_uploaded" src="'+ imagedata['image_path'] + '" />');
+
+    });
+   </script>
+</body>
+
+</html>
